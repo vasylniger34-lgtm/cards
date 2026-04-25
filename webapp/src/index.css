@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap');
+
+:root {
+  --bg-color: #0b0c10;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --accent: #d4af37; /* Gold */
+  --text-main: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --blur: blur(16px);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-color);
+  background-image: radial-gradient(circle at 50% 0%, #1f1b36 0%, var(--bg-color) 70%);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Outfit', sans-serif;
+  margin-top: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Typography */
+.text-center { text-align: center; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+.mt-4 { margin-top: 32px; }
+.text-secondary { color: var(--text-secondary); }
+.text-sm { font-size: 14px; }
+
+/* Buttons */
+button {
+  font-family: 'Outfit', sans-serif;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  padding: 16px 20px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  display: block;
+  width: 100%;
+}
+button:active {
+  transform: scale(0.97);
+}
+button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+button.primary {
+  background: var(--accent);
+  color: #0b0c10;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+}
+button.primary:hover {
+  background: #ebd076;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+/* General Layouts */
+.screen {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.screen-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Glass panel */
+.glass-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+.slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input */
+input.glass-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+}
+input.glass-input:focus {
+  border-color: var(--accent);
+}
+
+/* Grid for choices */
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* 3D Card */
+.card-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+.card-container {
+  perspective: 1000px;
+  width: 260px;
+  height: 380px;
+  margin: 0 auto;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+}
+.card-inner.flipped {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.card-front {
+  background: linear-gradient(135deg, #2a2253 0%, #16112d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.card-front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+.card-front-icon {
+  font-size: 64px;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+.card-back {
+  background: #000;
+  transform: rotateY(180deg);
+}
+.card-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Reflection Overlay */
+.reflection-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(11, 12, 16, 1) 40%, rgba(11, 12, 16, 0.8) 80%, transparent);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding-top: 60px; /* Gradient fade top */
+  z-index: 10;
+}
