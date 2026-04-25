@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './index.css'
 import cardsDb from './data/cards.json';
+import configDb from './data/config.json';
 
 const WebApp = window.Telegram.WebApp;
 
@@ -284,12 +285,13 @@ function App() {
       {step === 'final' && (
         <div className="screen final-screen fade-in">
           <div className="glass-panel center-content">
-            <h2>Вот здесь начинается разница...</h2>
-            <p>Можно всё понять — и оставить как есть. А можно сделать шаг — и получить другой результат.</p>
-            <p>Если хочешь пройти глубже и разобрать свой запрос не в 3 шагах, а до реальных изменений — приходи на игру.</p>
+            <h2>{configDb.finalMessageTitle}</h2>
+            <p>{configDb.finalMessageBody1}</p>
+            <p>{configDb.finalMessageBody2}</p>
+            <p>{configDb.finalMessageBody3}</p>
             
-            <a href="https://t.me/inga_belyakova" target="_blank" rel="noopener noreferrer" className="primary-btn" style={{textDecoration: 'none', display: 'inline-block', marginTop: '20px'}}>
-              НАПИСАТЬ ИНГЕ / ХОЧУ ИГРУ
+            <a href={configDb.contactLink} target="_blank" rel="noopener noreferrer" className="primary-btn" style={{textDecoration: 'none', display: 'inline-block', marginTop: '20px'}}>
+              {configDb.ctaButtonText}
             </a>
             
             <button className="text-btn" style={{marginTop: '15px'}} onClick={() => WebApp.close()}>
