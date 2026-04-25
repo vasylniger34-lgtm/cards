@@ -400,3 +400,49 @@ ul {
   width: 26px;
   height: 26px;
 }
+
+/* Contact Grid and Buttons */
+.contact-label {
+  font-family: 'Outfit';
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.contact-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-family: 'Outfit';
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: white;
+}
+
+.contact-button:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+}
+
+.contact-button.telegram {
+  border-color: rgba(0, 136, 204, 0.3);
+}
+.contact-button.instagram {
+  border-color: rgba(225, 48, 108, 0.3);
+}

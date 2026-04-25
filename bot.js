@@ -382,10 +382,9 @@ bot.action('start_text_game', (ctx) => {
 
 bot.start(async (ctx) => {
     await ctx.reply(
-        `Привет 🤍\n\nТы попала в мини-игру от Инги Беляковой.\nВыбери, как тебе удобнее пройти игру:`,
+        `Привет 🤍\n\nТы попала в мини-игру от Инги Беляковой.\nНажми на кнопку ниже, чтобы начать:`,
         Markup.inlineKeyboard([
-            [Markup.button.webApp("🌟 ИГРАТЬ В WEB APP (Рекомендую)", WEBAPP_URL)],
-            [Markup.button.callback("💬 ИГРАТЬ В ЧАТЕ (Текстовая версия)", "start_text_game")]
+            [Markup.button.webApp("🌟 ИГРАТЬ", WEBAPP_URL)]
         ])
     );
 });
