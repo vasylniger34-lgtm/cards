@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import WebApp from '@twa-dev/sdk'
 import './index.css'
-
 import cardsDb from './data/cards.json';
+
+const WebApp = window.Telegram.WebApp;
 
 function App() {
   const [step, setStep] = useState('welcome');
