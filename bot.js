@@ -47,18 +47,17 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 // Text Game Scene
 const gameWizard = new Scenes.WizardScene(
     'GAME_SCENE',
-    // Step 0: Welcome & Ask for question
+    // Step 0: Welcome
     async (ctx) => {
-        await ctx.reply(`Привіт 🤍\nЦе текстова версія міні-гри від Інги Бєлякової.\n\nЗадай одне питання, яке зараз важливе для тебе.`);
+        await ctx.reply(`Привет 🤍\nТы попала в мини-игру от Инги Беляковой.\n\nЗа несколько минут ты увидишь:\n— что сейчас происходит в твоём запросе\n— где тебя реально тормозит\n— какой шаг поможет сдвинуться с места\n\nЗадай внутри один вопрос, который сейчас важен.`);
         return ctx.wizard.next();
     },
-    // Step 1: Save question & Show Direction
+    // Step 1: Direction
     async (ctx) => {
         if (!ctx.message || !ctx.message.text) {
-            await ctx.reply('Будь ласка, введи своє питання текстом.');
+            await ctx.reply('Жду твой вопрос в виде текста.');
             return;
         }
-        ctx.scene.session.question = ctx.message.text;
         ctx.scene.session.userData = {
             name: ctx.from.first_name,
             username: ctx.from.username,
@@ -67,24 +66,24 @@ const gameWizard = new Scenes.WizardScene(
             clickedBooking: false
         };
 
-        await ctx.reply(`Що тебе зараз найбільше чіпляє?\n\nВибери напрямок:`, 
+        await ctx.reply(`Хорошо.\n\nСейчас будет не про «угадайку», а про тебя.\n\nНа секунду остановись.\n\nПодумай о своём запросе.\nНе размыто. Конкретно.\n\nЧто тебя сейчас больше всего цепляет?\n\nВыбери направление:`, 
             Markup.inlineKeyboard([
-                [Markup.button.callback('💰 Гроші / дохід', 'dir_money')],
-                [Markup.button.callback('💭 Стан / енергія', 'dir_energy')],
-                [Markup.button.callback('🔥 Самореалізація', 'dir_self')],
-                [Markup.button.callback('❤️ Стосунки', 'dir_love')],
-                [Markup.button.callback('🚀 Наступний крок', 'dir_next')]
+                [Markup.button.callback('💰 Деньги / доход', 'dir_money')],
+                [Markup.button.callback('💭 Состояние / энергия', 'dir_energy')],
+                [Markup.button.callback('🔥 Самореализация', 'dir_self')],
+                [Markup.button.callback('❤️ Отношения', 'dir_love')],
+                [Markup.button.callback('🚀 Движение / следующий шаг', 'dir_next')]
             ])
         );
         return ctx.wizard.next();
     },
-    // Step 2: Confirm direction
+    // Step 2: Confirmation
     async (ctx) => {
         if (ctx.callbackQuery) {
             ctx.scene.session.direction = ctx.callbackQuery.data;
             await ctx.answerCbQuery();
-            await ctx.editMessageText(`Зараз ти витягнеш 3 карти...\n\nГотова?`,
-                Markup.inlineKeyboard([[Markup.button.callback('ВИТЯГНУТИ 1 КАРТУ', 'pull_1')]])
+            await ctx.editMessageText(`Отлично.\n\nДержи в голове свой запрос именно в этом направлении.\n\nСейчас ты вытянешь 3 карты:\n\n1 карта — что происходит на самом деле\n2 карта — где ты себя тормозишь\n3 карта — какой шаг поможет сдвинуться\n\nНе пытайся «угадать правильно».\nПросто смотри, что откликается.\n\nГотова?`,
+                Markup.inlineKeyboard([[Markup.button.callback('ВЫТЯНУТЬ 1 КАРТУ', 'pull_1')]])
             );
             return ctx.wizard.next();
         }
@@ -99,11 +98,11 @@ const gameWizard = new Scenes.WizardScene(
             await ctx.answerCbQuery();
             await ctx.replyWithPhoto({ source: path.join(__dirname, card.image) }, { caption: card.text });
             
-            await ctx.reply(`Не побіжно, зупинись.\n\nВідповідай чесно самому собі: Це зараз про тебе?`,
+            await ctx.reply(`Стоп.\n\nНе пролистывай.\n\nСейчас будет неприятно, но честно.\n\nОтветь себе:\n\n— Где ты уже видишь это, но продолжаешь делать вид, что «всё нормально»?\n— В чём ты себя оправдываешь вместо того, чтобы признать?\n— Что ты уже давно понимаешь… но не меняешь?\n\nНе нужно писать.\n\nПросто не убегай от ответа.\n\nОтветь честно самому себе\n\nЭто сейчас про тебя?`,
                 Markup.inlineKeyboard([
-                    [Markup.button.callback('🎯 Так, в точку', 'fb1_yes')],
-                    [Markup.button.callback('🤔 Частково', 'fb1_part')],
-                    [Markup.button.callback('❌ Не відгукується', 'fb1_no')]
+                    [Markup.button.callback('🎯 да, в точку', 'fb1_yes')],
+                    [Markup.button.callback('🤔 частично', 'fb1_part')],
+                    [Markup.button.callback('❌ не откликается', 'fb1_no')]
                 ])
             );
             return ctx.wizard.next();
@@ -112,16 +111,29 @@ const gameWizard = new Scenes.WizardScene(
     // Step 4: After Card 1
     async (ctx) => {
         if (ctx.callbackQuery) {
+            const fb = ctx.callbackQuery.data;
             await ctx.answerCbQuery();
-            await ctx.reply(`Йдемо далі. Що в тебе гальмує?`,
-                Markup.inlineKeyboard([[Markup.button.callback('ВИТЯГНУТИ 2 КАРТУ', 'pull_2')]])
+            if (fb === 'fb1_no') {
+                await ctx.reply(`Тогда просто зафиксируй это как вариант.\n\nИногда не откликается сразу —\nно догоняет чуть позже.`, Markup.inlineKeyboard([[Markup.button.callback('ДАЛЬШЕ', 'pull_2')]]));
+            } else {
+                await ctx.reply(`Окей.\n\nТогда ты это уже видишь.\n\nВопрос — что ты с этим делаешь?`, Markup.inlineKeyboard([[Markup.button.callback('ДАЛЬШЕ', 'pull_2')]]));
+            }
+            return ctx.wizard.next();
+        }
+    },
+    // Step 5: Pre Card 2
+    async (ctx) => {
+        if (ctx.callbackQuery) {
+            await ctx.answerCbQuery();
+            await ctx.reply(`Сейчас будет глубже.\n\nНе про ситуацию —\nа про то, где ты сама себя тормозишь.`,
+                Markup.inlineKeyboard([[Markup.button.callback('ВЫТЯНУТЬ 2 КАРТУ', 'pull_2_real')]])
             );
             return ctx.wizard.next();
         }
     },
-    // Step 5: Display Card 2
+    // Step 6: Card 2
     async (ctx) => {
-        if (ctx.callbackQuery && ctx.callbackQuery.data === 'pull_2') {
+        if (ctx.callbackQuery && ctx.callbackQuery.data === 'pull_2_real') {
             const cards = getCards().obstacle;
             const card = cards[Math.floor(Math.random() * cards.length)];
             ctx.scene.session.userData.cards.push(card.image);
@@ -129,29 +141,46 @@ const gameWizard = new Scenes.WizardScene(
             await ctx.answerCbQuery();
             await ctx.replyWithPhoto({ source: path.join(__dirname, card.image) }, { caption: card.text });
             
-            await ctx.reply(`Впізнаєш себе?`,
+            await ctx.reply(`Посмотри на эту карту\n\nЭто то, что сейчас тебя тормозит.\n\nУзнаёшь себя?`,
                 Markup.inlineKeyboard([
-                    [Markup.button.callback('😬 Так, є таке', 'fb2_yes')],
-                    [Markup.button.callback('🤏 Частково діє', 'fb2_part')],
-                    [Markup.button.callback('❌ Не про мене', 'fb2_no')]
+                    [Markup.button.callback('😬 да, есть такое', 'fb2_yes')],
+                    [Markup.button.callback('🤏 частично', 'fb2_part')],
+                    [Markup.button.callback('❌ не про меня', 'fb2_no')]
                 ])
             );
             return ctx.wizard.next();
         }
     },
-    // Step 6: Transition to 3
+    // Step 7: After Card 2
+    async (ctx) => {
+        if (ctx.callbackQuery) {
+            const fb = ctx.callbackQuery.data;
+            await ctx.answerCbQuery();
+            if (fb === 'fb2_no') {
+                await ctx.reply(`Окей.\n\nТогда просто держи это как вариант.\n\nИногда это проявляется не так очевидно.`, Markup.inlineKeyboard([[Markup.button.callback('ДАЛЬШЕ', 'trans_3')]]));
+            } else {
+                await ctx.reply(`Окей.\n\nЗначит ты это уже видишь.\n\nСкажи честно:\nты продолжаешь делать так же?`, Markup.inlineKeyboard([
+                    [Markup.button.callback('да', 'trans_3')],
+                    [Markup.button.callback('иногда', 'trans_3')],
+                    [Markup.button.callback('нет', 'trans_3')]
+                ]));
+            }
+            return ctx.wizard.next();
+        }
+    },
+    // Step 8: Pre Card 3
     async (ctx) => {
         if (ctx.callbackQuery) {
             await ctx.answerCbQuery();
-            await ctx.reply(`Ось чому немає зрушення. Не через ситуацію, а через те, як ти дієш всередині неї.\n\nДавай покажу, що з цим робити.`,
-                Markup.inlineKeyboard([[Markup.button.callback('ВИТЯГНУТИ 3 КАРТУ', 'pull_3')]])
+            await ctx.reply(`Вот поэтому и нет сдвига.\n\nНе из-за ситуации.\nА из-за того, как ты действуешь внутри неё.\n\nДавай покажу, что с этим делать.`,
+                Markup.inlineKeyboard([[Markup.button.callback('ВЫТЯНУТЬ 3 КАРТУ', 'pull_3_real')]])
             );
             return ctx.wizard.next();
         }
     },
-    // Step 7: Display Card 3
+    // Step 9: Card 3 Display
     async (ctx) => {
-        if (ctx.callbackQuery && ctx.callbackQuery.data === 'pull_3') {
+        if (ctx.callbackQuery && ctx.callbackQuery.data === 'pull_3_real') {
             const cards = getCards().step;
             const card = cards[Math.floor(Math.random() * cards.length)];
             ctx.scene.session.userData.cards.push(card.image);
@@ -159,36 +188,71 @@ const gameWizard = new Scenes.WizardScene(
             await ctx.answerCbQuery();
             await ctx.replyWithPhoto({ source: path.join(__dirname, card.image) }, { caption: card.text });
             
-            await ctx.reply(`Смотри. Вот твой шаг. Не ідеальний, але той, що реально зробити.\n\nГотова спробувати?`,
+            await ctx.reply(`Смотри.\n\nВот твой шаг.\n\nНе идеальный.\nНе когда-нибудь потом.\n\nА тот, который реально можно сделать.\n\nГотова попробовать?`,
                 Markup.inlineKeyboard([
-                    [Markup.button.callback('Зроблю в найближчі 24г', 'fb3_yes')],
-                    [Markup.button.callback('Подумаю', 'fb3_think')],
-                    [Markup.button.callback('Можливо пізніше', 'fb3_no')]
+                    [Markup.button.callback('да', 'fb3_yes')],
+                    [Markup.button.callback('пока нет', 'fb3_no')]
                 ])
             );
             return ctx.wizard.next();
         }
     },
-    // Step 8: Final
+    // Step 10: After Card 3
     async (ctx) => {
         if (ctx.callbackQuery) {
-            const feedback = ctx.callbackQuery.data;
+            const fb = ctx.callbackQuery.data;
+            await ctx.answerCbQuery();
+            if (fb === 'fb3_yes') {
+                await ctx.reply(`Тогда зафиксируй:\n\nЧто именно ты сделаешь в ближайшие 24 часа?`, Markup.inlineKeyboard([
+                    [Markup.button.callback('сделаю это', 'fin_do')],
+                    [Markup.button.callback('подумаю как', 'fin_do')],
+                    [Markup.button.callback('позже', 'fin_do')]
+                ]));
+            } else {
+                await ctx.reply(`Это нормально.\n\nНо давай честно:\n\nничего не изменится, если ничего не сделать.\n\nТы это уже видишь.\n\nВопрос только — когда ты решишь начать.`, Markup.inlineKeyboard([
+                    [Markup.button.callback('хочу разобраться глубже', 'fin_do')],
+                    [Markup.button.callback('пока не готова', 'fin_wait')]
+                ]));
+            }
+            return ctx.wizard.next();
+        }
+    },
+    // Step 11: Final
+    async (ctx) => {
+        if (ctx.callbackQuery) {
+            const fb = ctx.callbackQuery.data;
             await ctx.answerCbQuery();
             
-            if (feedback === 'fb3_yes') {
+            if (fb === 'fin_do') {
                  ctx.scene.session.userData.clickedBooking = true;
             }
             saveLead(ctx.scene.session.userData);
 
-            await ctx.reply(`Можна все зрозуміти — і залишити як є. А можна зробити крок — і отримати інший результат.\n\nЯкщо хочеш пройти глибше і розібрати свій запит не в 3 кроках, а до реальних змін — приходь на повноцінну гру.\n\nТам ми докручуємо до дії та результату.`,
-                Markup.inlineKeyboard([
-                    [Markup.button.url('НАПИСАТИ ІНЗІ', 'https://t.me/inga_belyakova')]
-                ])
-            );
+            if (fb === 'fin_wait') {
+                await ctx.reply(`Если чувствуешь, что хочешь не просто «подумать», а реально сдвинуться — напиши мне.\n\nЯ подберу формат под твой запрос:\n— индивидуально\n— или в группе`,
+                    Markup.inlineKeyboard([[Markup.button.url('НАПИСАТЬ ИНГЕ', 'https://t.me/inga_belyakova')]])
+                );
+            } else {
+                await ctx.reply(`Вот здесь начинается разница.\n\nМожно понять — и оставить как есть.\nА можно сделать — и получить другой результат.\n\nЕсли хочешь пройти глубже и разобрать свой запрос не в 3 шагах, а до реального изменения — приходи на игру.\n\nТам мы не просто смотрим.\nТам мы докручиваем до действия и результата.`,
+                    Markup.inlineKeyboard([
+                        [Markup.button.callback('ХОЧУ ИГРУ', 'go_game')],
+                        [Markup.button.callback('ПОКА ДОСТАТОЧНО', 'stop_game')]
+                    ])
+                );
+            }
             return ctx.scene.leave();
         }
     }
 );
+
+bot.action('go_game', async (ctx) => {
+    await ctx.answerCbQuery();
+    await ctx.reply('Отлично! Напиши мне в личные сообщения для старта:', Markup.inlineKeyboard([[Markup.button.url('НАПИСАТЬ ИНГЕ', 'https://t.me/inga_belyakova')]]));
+});
+bot.action('stop_game', async (ctx) => {
+    await ctx.answerCbQuery();
+    await ctx.reply('Поняла тебя! Возвращайся, когда почувствуешь готовность.');
+});
 
 const stage = new Scenes.Stage([gameWizard]);
 
@@ -203,10 +267,10 @@ bot.action('start_text_game', (ctx) => {
 
 bot.start(async (ctx) => {
     await ctx.reply(
-        `Привіт! 🤍\n\nТи потрапила в міні-гру від Інги Бєлякової.\nОбери, як тобі зручніше пройти гру — в занурюючому Web App, або прямо тут у текстовому чаті:`,
+        `Привет 🤍\n\nТы попала в мини-игру от Инги Беляковой.\nВыбери, как тебе удобнее пройти игру:`,
         Markup.inlineKeyboard([
-            [Markup.button.webApp("🌟 ЗІГРАТИ У WEB APP (Рекомендую)", WEBAPP_URL)],
-            [Markup.button.callback("💬 ЗІГРАТИ В ЧАТІ (Текстова)", "start_text_game")]
+            [Markup.button.webApp("🌟 ИГРАТЬ В WEB APP (Рекомендую)", WEBAPP_URL)],
+            [Markup.button.callback("💬 ИГРАТЬ В ЧАТЕ (Текстовая версия)", "start_text_game")]
         ])
     );
 });
