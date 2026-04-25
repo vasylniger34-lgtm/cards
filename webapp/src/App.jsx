@@ -78,9 +78,11 @@ function App() {
             <div className="input-group">
               <label>Задай внутри один вопрос, который сейчас важен:</label>
               <textarea 
+                className="glass-input textarea"
                 placeholder="Что меня беспокоит прямо сейчас..."
                 value={userData.question}
                 onChange={(e) => setUserData({...userData, question: e.target.value})}
+                rows="4"
               />
             </div>
             <button 
@@ -152,13 +154,16 @@ function App() {
             <h2 className="step-title">Карта 1: Ситуация</h2>
             <p className="card-overlay-text">Где ты уже видишь это, но продолжаешь делать вид, что «всё нормально»?</p>
             
-            <div className={`card-container ${cardFlipped ? 'flipped' : ''}`} onClick={() => setCardFlipped(true)}>
-              <div className="card-flipper">
+            <div className="card-container" onClick={() => setCardFlipped(true)}>
+              <div className={`card-inner ${cardFlipped ? 'flipped' : ''}`}>
                 <div className="card-front">
                   <div className="tap-hint">Кликни, чтобы перевернуть</div>
                 </div>
                 <div className="card-back">
-                  <img src={`/images/${currentCard?.image}`} alt="Карта 1" className="card-image" />
+                  <div className="card-image-wrapper">
+                    <img src={`/images/${currentCard?.image}`} alt="Карта 1" className="card-image" />
+                    <div className="card-glow"></div>
+                  </div>
                   <p className="card-meaning">{currentCard?.text}</p>
                 </div>
               </div>
@@ -201,13 +206,16 @@ function App() {
           <div className="glass-panel">
              <h2 className="step-title">Карта 2: Внутренний тормоз</h2>
             
-            <div className={`card-container ${cardFlipped ? 'flipped' : ''}`} onClick={() => setCardFlipped(true)}>
-              <div className="card-flipper">
+            <div className="card-container" onClick={() => setCardFlipped(true)}>
+              <div className={`card-inner ${cardFlipped ? 'flipped' : ''}`}>
                 <div className="card-front">
                   <div className="tap-hint">Кликни, чтобы перевернуть</div>
                 </div>
                 <div className="card-back">
-                  <img src={`/images/${currentCard?.image}`} alt="Карта 2" className="card-image" />
+                  <div className="card-image-wrapper">
+                    <img src={`/images/${currentCard?.image}`} alt="Карта 2" className="card-image" />
+                    <div className="card-glow"></div>
+                  </div>
                   <p className="card-meaning">{currentCard?.text}</p>
                 </div>
               </div>
@@ -251,13 +259,16 @@ function App() {
             <h2 className="step-title">Карта 3: Ваш Шаг</h2>
             <p className="card-overlay-text">Вот твой шаг. Не идеальный. Не когда-нибудь потом. А тот, который реально можно сделать.</p>
 
-            <div className={`card-container ${cardFlipped ? 'flipped' : ''}`} onClick={() => setCardFlipped(true)}>
-              <div className="card-flipper">
+            <div className="card-container" onClick={() => setCardFlipped(true)}>
+              <div className={`card-inner ${cardFlipped ? 'flipped' : ''}`}>
                 <div className="card-front">
                   <div className="tap-hint">Кликни, чтобы перевернуть</div>
                 </div>
                 <div className="card-back">
-                  <img src={`/images/${currentCard?.image}`} alt="Карта 3" className="card-image" />
+                  <div className="card-image-wrapper">
+                    <img src={`/images/${currentCard?.image}`} alt="Карта 3" className="card-image" />
+                    <div className="card-glow"></div>
+                  </div>
                   <p className="card-meaning">{currentCard?.text}</p>
                 </div>
               </div>
