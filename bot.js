@@ -1,3 +1,4 @@
+console.log('--- BOT STARTING ---');
 const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const express = require('express');
 const cors = require('cors');
@@ -39,6 +40,11 @@ const pushToGithub = () => {
 };
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+bot.on('message', (ctx, next) => {
+    console.log(`Received message from ${ctx.from.id}: ${ctx.message.text || 'non-text'}`);
+    return next();
+});
 
 // ------------- TEXT GAME SCENE -------------
 const gameWizard = new Scenes.WizardScene('GAME_SCENE',
@@ -386,10 +392,14 @@ bot.start(async (ctx) => {
 
 bot.catch((err, ctx) => console.error(`Error`, err));
 
+console.log('Registering launch handler...');
+bot.launch({ polling: { dropPendingUpdates: true } })
+    .then(() => console.log('✅ Telegram Bot running...'))
+    .catch(e => console.error('Launch error:', e));
+
 app.listen(PORT, () => {
     console.log(`Express is running on ${PORT}`);
     console.log(`Web App URL is: ${WEBAPP_URL}`);
-    bot.launch().then(() => console.log('Telegram Bot running...'));
 });
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
